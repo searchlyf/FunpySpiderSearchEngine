@@ -1,5 +1,5 @@
-__author__ = 'mtianyan'
-__date__ = '2018/8/20 07:40'
+__author__ = "mtianyan"
+__date__ = "2018/8/20 07:40"
 
 import datetime
 import re

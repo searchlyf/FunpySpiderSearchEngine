@@ -1,5 +1,5 @@
-__author__ = 'mtianyan'
-__date__ = '2018/8/20 04:34'
+__author__ = "mtianyan"
+__date__ = "2018/8/20 04:34"
 
 from scrapy.cmdline import execute
 

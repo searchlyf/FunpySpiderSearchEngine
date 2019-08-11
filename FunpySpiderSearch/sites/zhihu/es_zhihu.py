@@ -1,11 +1,20 @@
-__author__ = 'mtianyan'
-__date__ = '2017/6/25 15:45'
+__author__ = "mtianyan"
+__date__ = "2017/6/25 15:45"
 
-from elasticsearch_dsl import connections, Document, Keyword, Text, Integer, Date, Completion, analyzer
+from elasticsearch_dsl import (
+    connections,
+    Document,
+    Keyword,
+    Text,
+    Integer,
+    Date,
+    Completion,
+    analyzer,
+)
 
 connections.create_connection(hosts=["localhost"])
 
-my_analyzer = analyzer('ik_smart')
+my_analyzer = analyzer("ik_smart")
 
 
 class ZhiHuQuestionIndex(Document):
@@ -25,7 +34,7 @@ class ZhiHuQuestionIndex(Document):
     crawl_time = Date()
 
     class Index:
-        name = 'zhihu_question'
+        name = "zhihu_question"
 
 
 class ZhiHuAnswerIndex(Document):
@@ -46,7 +55,7 @@ class ZhiHuAnswerIndex(Document):
     crawl_time = Date()
 
     class Index:
-        name = 'zhihu_answer'
+        name = "zhihu_answer"
 
 
 if __name__ == "__main__":

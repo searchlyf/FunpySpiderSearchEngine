@@ -1,5 +1,5 @@
-__author__ = 'mtianyan'
-__date__ = '2018/8/20 08:05'
+__author__ = "mtianyan"
+__date__ = "2018/8/20 08:05"
 import pickle
 import redis
 import re
@@ -30,7 +30,7 @@ def extract_num(text):
 
 def extract_num_include_dot(text):
     # 从包含,的字符串中提取出数字
-    text_num = text.replace(',', '')
+    text_num = text.replace(",", "")
     try:
         nums = int(text_num)
     except:

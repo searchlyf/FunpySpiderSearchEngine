@@ -59,6 +59,7 @@ class MysqlItem(BaseItem):
     """
     数据存取至mysql数据库应该实现的接口
     """
+
     table_name = ""  # 数据库表名
     duplicate_key_update = []  # "重复插入时，需要更新的字段"
 

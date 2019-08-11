@@ -1,5 +1,5 @@
-__author__ = 'mtianyan'
-__date__ = '2018/8/20 07:53'
+__author__ = "mtianyan"
+__date__ = "2018/8/20 07:53"
 
 
 def generate_suggests(es_con, info_tuple):
@@ -8,9 +8,13 @@ def generate_suggests(es_con, info_tuple):
     suggests = []
     for text, weight in info_tuple:
         if text:
-            words = es.indices.analyze(index="jobbole_blog",
-                                       body={"analyzer": "ik_max_word", "text": "{0}".format(text)})
-            anylyzed_words = set([r["token"] for r in words["tokens"] if len(r["token"]) > 1])
+            words = es.indices.analyze(
+                index="jobbole_blog",
+                body={"analyzer": "ik_max_word", "text": "{0}".format(text)},
+            )
+            anylyzed_words = set(
+                [r["token"] for r in words["tokens"] if len(r["token"]) > 1]
+            )
             new_words = anylyzed_words - used_words
         else:
             new_words = set()

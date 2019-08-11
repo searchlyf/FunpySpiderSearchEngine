@@ -1,5 +1,5 @@
-__author__ = 'mtianyan'
-__date__ = '2018/8/20 05:47'
+__author__ = "mtianyan"
+__date__ = "2018/8/20 05:47"
 
 import datetime
 import re
@@ -42,12 +42,24 @@ class JobboleBlogItem(scrapy.Item, MysqlItem, ElasticSearchItem):
     """
     伯乐在线Item，命名规范: 域名+内容+Item
     """
-    field_list = ['title', 'create_date', 'url', 'url_object_id', 'front_image_url',
-                  'praise_nums', 'comment_nums', 'fav_nums', 'tags', 'content', 'crawl_time']
 
-    duplicate_key_update = ['praise_nums', 'comment_nums', 'crawl_time', 'fav_nums']
+    field_list = [
+        "title",
+        "create_date",
+        "url",
+        "url_object_id",
+        "front_image_url",
+        "praise_nums",
+        "comment_nums",
+        "fav_nums",
+        "tags",
+        "content",
+        "crawl_time",
+    ]
 
-    table_name = 'jobbole_article'
+    duplicate_key_update = ["praise_nums", "comment_nums", "crawl_time", "fav_nums"]
+
+    table_name = "jobbole_article"
 
     title = scrapy.Field()
     create_date = scrapy.Field()
@@ -57,8 +69,9 @@ class JobboleBlogItem(scrapy.Item, MysqlItem, ElasticSearchItem):
     praise_nums = scrapy.Field()
     comment_nums = scrapy.Field(input_processor=MapCompose(get_nums))
     fav_nums = scrapy.Field(input_processor=MapCompose(get_nums))
-    tags = scrapy.Field(input_processor=MapCompose(remove_comment_tags),
-                        output_processor=Join(","))
+    tags = scrapy.Field(
+        input_processor=MapCompose(remove_comment_tags), output_processor=Join(",")
+    )
     content = scrapy.Field()
     crawl_time = scrapy.Field()
 
@@ -99,7 +112,7 @@ class JobboleBlogItem(scrapy.Item, MysqlItem, ElasticSearchItem):
         """保存伯乐在线文章到es中"""
         self.clean_data()
         blog = JobboleBlogIndex()
-        blog.title = self['title']
+        blog.title = self["title"]
         blog.create_date = self["create_date"]
         blog.content = remove_tags(self["content"])
         blog.front_image_url = self["front_image_url"]
@@ -110,9 +123,10 @@ class JobboleBlogItem(scrapy.Item, MysqlItem, ElasticSearchItem):
         blog.tags = self["tags"]
         blog.meta.id = self["url_object_id"]
         # 在保存数据时必须传入suggest
-        blog.suggest = generate_suggests(es_jobbole_blog,
-                                         ((blog.title, 10), (blog.tags, 6), (blog.content, 4)))
-        real_time_count('jobbole_blog_count', JOBBOLE_COUNT_INIT)
+        blog.suggest = generate_suggests(
+            es_jobbole_blog, ((blog.title, 10), (blog.tags, 6), (blog.content, 4))
+        )
+        real_time_count("jobbole_blog_count", JOBBOLE_COUNT_INIT)
         blog.save()
 
     def help_fields(self):
@@ -120,12 +134,15 @@ class JobboleBlogItem(scrapy.Item, MysqlItem, ElasticSearchItem):
             print(field, "= scrapy.Field()")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     instance = JobboleBlogItem()
     print(instance.help_fields())
     print("*" * 30)
     print("self.data_clean()")
-    sql, params = fun_sql_insert(field_list=instance.field_list, duplicate_key_update=instance.duplicate_key_update,
-                                 table_name=instance.table_name)
+    sql, params = fun_sql_insert(
+        field_list=instance.field_list,
+        duplicate_key_update=instance.duplicate_key_update,
+        table_name=instance.table_name,
+    )
     print(sql)
     print(params)

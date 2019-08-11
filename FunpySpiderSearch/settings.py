@@ -8,12 +8,14 @@
 #     https://doc.scrapy.org/en/latest/topics/settings.html
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-from config import MYSQL_USER, MYSQL_PASSWORD, MYSQL_DBNAME
+MYSQL_USER = "root"
+MYSQL_PASSWORD = ""
+MYSQL_DBNAME = "try"
 
-BOT_NAME = 'FunpySpiderSearch'
+BOT_NAME = "FunpySpiderSearch"
 
-SPIDER_MODULES = ['FunpySpiderSearch.spiders']
-NEWSPIDER_MODULE = 'FunpySpiderSearch.spiders'
+SPIDER_MODULES = ["FunpySpiderSearch.spiders"]
+NEWSPIDER_MODULE = "FunpySpiderSearch.spiders"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'FunpySpiderSearch (+http://www.yourdomain.com)'
@@ -65,9 +67,9 @@ COOKIES_ENABLED = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'FunpySpiderSearch.pipelines.FunpyspidersearchPipeline': 300,
+    "FunpySpiderSearch.pipelines.FunpyspidersearchPipeline": 300,
     # 'FunpySpiderSearch.pipelines.MysqlTwistedPipeline': 400,
-    'FunpySpiderSearch.pipelines.ElasticSearchPipeline': 500,
+    "FunpySpiderSearch.pipelines.ElasticSearchPipeline": 500,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
