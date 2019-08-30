@@ -7,7 +7,7 @@ def generate_suggests(es_con, info_tuple):
     used_words = set()
     suggests = []
     for text, weight in info_tuple:
-        if text:
+        if text and es.indices.exists(index="jobbole_blog"):
             words = es.indices.analyze(
                 index="jobbole_blog",
                 body={"analyzer": "ik_max_word", "text": "{0}".format(text)},

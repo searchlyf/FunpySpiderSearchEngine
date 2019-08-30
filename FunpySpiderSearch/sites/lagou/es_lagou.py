@@ -22,13 +22,6 @@ class LagouJobIndex(Document):
     title = Text(analyzer="ik_max_word")
     url = Keyword()
     url_object_id = Keyword()
-    salary_min = Integer()
-    salary_max = Integer()
-    job_city = Keyword()
-    work_years_min = Integer()
-    work_years_max = Integer()
-    degree_need = Text(analyzer="ik_max_word")
-    job_type = Keyword()
     publish_time = Date()
     job_advantage = Text(analyzer="ik_max_word")
     job_desc = Text(analyzer="ik_smart")
@@ -40,7 +33,3 @@ class LagouJobIndex(Document):
 
     class Index:
         name = "lagou_job"
-
-
-if __name__ == "__main__":
-    LagouJobIndex.init()

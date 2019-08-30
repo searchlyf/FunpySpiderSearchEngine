@@ -13,7 +13,6 @@ from w3lib.html import remove_tags
 from FunpySpiderSearch.items import MysqlItem, ElasticSearchItem
 from FunpySpiderSearch.settings import SQL_DATETIME_FORMAT
 from FunpySpiderSearch.sites.jobbole.es_jobbole import JobboleBlogIndex
-from FunpySpiderSearch.utils.common import real_time_count
 from FunpySpiderSearch.utils.es_utils import generate_suggests
 from FunpySpiderSearch.utils.mysql_utils import fun_sql_insert
 from FunpySpiderSearch.utils.string_util import return_value, get_nums
@@ -126,7 +125,6 @@ class JobboleBlogItem(scrapy.Item, MysqlItem, ElasticSearchItem):
         blog.suggest = generate_suggests(
             es_jobbole_blog, ((blog.title, 10), (blog.tags, 6), (blog.content, 4))
         )
-        real_time_count("jobbole_blog_count", JOBBOLE_COUNT_INIT)
         blog.save()
 
     def help_fields(self):

@@ -14,7 +14,6 @@ from FunpySpiderSearch.sites.zhihu.es_zhihu import ZhiHuQuestionIndex, ZhiHuAnsw
 from FunpySpiderSearch.utils.common import (
     extract_num,
     extract_num_include_dot,
-    real_time_count,
 )
 from FunpySpiderSearch.utils.es_utils import generate_suggests
 from FunpySpiderSearch.utils.mysql_utils import fun_sql_insert
@@ -120,7 +119,6 @@ class ZhihuQuestionItem(scrapy.Item, MysqlItem, ElasticSearchItem):
             ((zhihu.title, 10), (zhihu.topics, 7), (zhihu.content, 5)),
         )
 
-        real_time_count("zhihu_question_count", ZHIHU_QUESTION_COUNT_INIT)
         zhihu.save()
 
     def help_fields(self):
@@ -219,7 +217,6 @@ class ZhihuAnswerItem(scrapy.Item, MysqlItem, ElasticSearchItem):
         zhihu.suggest = generate_suggests(
             es_zhihu_answer, ((zhihu.author_name, 10), (zhihu.content, 7))
         )
-        real_time_count("zhihu_answer_count", ZHIHU_QUESTION_COUNT_INIT)
         zhihu.save()
 
     def help_fields(self):

@@ -57,15 +57,6 @@ class LagouJobspider(CrawlSpider):
         item_loader.add_css("title", ".job-name::attr(title)")
         item_loader.add_value("url", response.url)
         item_loader.add_value("url_object_id", get_md5(response.url))
-        item_loader.add_css("salary_min", ".job_request .salary::text")
-        item_loader.add_xpath("job_city", "//*[@class='job_request']/p/span[2]/text()")
-        item_loader.add_xpath(
-            "work_years_min", "//*[@class='job_request']/p/span[3]/text()"
-        )
-        item_loader.add_xpath(
-            "degree_need", "//*[@class='job_request']/p/span[4]/text()"
-        )
-        item_loader.add_xpath("job_type", "//*[@class='job_request']/p/span[5]/text()")
         item_loader.add_css("tags", ".position-label li::text")
         item_loader.add_css("publish_time", ".publish_time::text")
         item_loader.add_css("job_advantage", ".job-advantage p::text")

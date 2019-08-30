@@ -11,7 +11,6 @@ from w3lib.html import remove_tags
 from FunpySpiderSearch.items import MysqlItem, ElasticSearchItem
 from FunpySpiderSearch.settings import SQL_DATETIME_FORMAT
 from FunpySpiderSearch.sites.lagou.es_lagou import LagouJobIndex
-from FunpySpiderSearch.utils.common import real_time_count
 from FunpySpiderSearch.utils.es_utils import generate_suggests
 from FunpySpiderSearch.utils.mysql_utils import fun_sql_insert
 
@@ -38,13 +37,6 @@ class LagouJobItem(scrapy.Item, MysqlItem, ElasticSearchItem):
     title = scrapy.Field()
     url = scrapy.Field()
     url_object_id = scrapy.Field()
-    salary_min = scrapy.Field()
-    salary_max = scrapy.Field()
-    job_city = scrapy.Field(input_processor=MapCompose(remove_splash))
-    work_years_min = scrapy.Field(input_processor=MapCompose(remove_splash))
-    work_years_max = scrapy.Field(input_processor=MapCompose(remove_splash))
-    degree_need = scrapy.Field(input_processor=MapCompose(remove_splash))
-    job_type = scrapy.Field()
     publish_time = scrapy.Field()
     job_advantage = scrapy.Field()
     job_desc = scrapy.Field()
@@ -60,41 +52,12 @@ class LagouJobItem(scrapy.Item, MysqlItem, ElasticSearchItem):
         """try catch 大法修复tags问题"""
         try:
             self["tags"] = self["tags"]
+            self["publish_time"] = self["publish_time"]
+            self["title"] = self["title"]
         except KeyError:
             self["tags"] = ""
-
-        match_obj1 = re.match("经验(\d+)-(\d+)年", self["work_years_min"])
-        match_obj2 = re.match("经验应届毕业生", self["work_years_min"])
-        match_obj3 = re.match("经验不限", self["work_years_min"])
-        match_obj4 = re.match("经验(\d+)年以下", self["work_years_min"])
-        match_obj5 = re.match("经验(\d+)年以上", self["work_years_min"])
-
-        if match_obj1:
-            self["work_years_min"] = match_obj1.group(1)
-            self["work_years_max"] = match_obj1.group(2)
-        elif match_obj2:
-            self["work_years_min"] = 0.5
-            self["work_years_max"] = 0.5
-        elif match_obj3:
-            self["work_years_min"] = 0
-            self["work_years_max"] = 0
-        elif match_obj4:
-            self["work_years_min"] = 0
-            self["work_years_max"] = match_obj4.group(1)
-        elif match_obj5:
-            self["work_years_min"] = match_obj4.group(1)
-            self["work_years_max"] = match_obj4.group(1) + 100
-        else:
-            self["work_years_min"] = 999
-            self["work_years_max"] = 999
-
-        match_salary = re.match("(\d+)[Kk]-(\d+)[Kk]", self["salary_min"])
-        if match_salary:
-            self["salary_min"] = match_salary.group(1)
-            self["salary_max"] = match_salary.group(2)
-        else:
-            self["salary_min"] = 666
-            self["salary_max"] = 666
+            self["publish_time"] = ""
+            self["title"] = ""
         match_time1 = re.match("(\d+):(\d+).*", self["publish_time"])
         match_time2 = re.match("(\d+)天前.*", self["publish_time"])
         match_time3 = re.match("(\d+)-(\d+)-(\d+)", self["publish_time"])
@@ -121,22 +84,15 @@ class LagouJobItem(scrapy.Item, MysqlItem, ElasticSearchItem):
     def save_to_mysql(self):
         self.clean_data()
         insert_sql = """
-                    insert into lagou_job(title, url, url_object_id, salary_min, salary_max, job_city, work_years_min, work_years_max, degree_need,
-                    job_type, publish_time, job_advantage, job_desc, job_addr, company_name, company_url,
+                    insert into lagou_job(title, url, url_object_id, work_years_min, work_years_max,
+                    publish_time, job_advantage, job_desc, job_addr, company_name, company_url,
                     tags, crawl_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    ON DUPLICATE KEY UPDATE salary_min=VALUES(salary_min), salary_max=VALUES(salary_max), job_desc=VALUES(job_desc)
+                    ON DUPLICATE KEY UPDATE  job_desc=VALUES(job_desc)
                 """
         sql_params = (
             self["title"],
             self["url"],
             self["url_object_id"],
-            self["salary_min"],
-            self["salary_max"],
-            self["job_city"],
-            self["work_years_min"],
-            self["work_years_max"],
-            self["degree_need"],
-            self["job_type"],
             self["publish_time"],
             self["job_advantage"],
             self["job_desc"],
@@ -155,18 +111,11 @@ class LagouJobItem(scrapy.Item, MysqlItem, ElasticSearchItem):
         job.title = self["title"]
         job.url = self["url"]
         job.meta.id = self["url_object_id"]
-        job.salary_min = self["salary_min"]
-        job.salary_max = self["salary_max"]
-        job.job_city = self["job_city"]
-        job.work_years_min = self["work_years_min"]
-        job.work_years_max = self["work_years_max"]
-        job.degree_need = self["degree_need"]
         job.job_desc = (
             remove_tags(self["job_desc"]).strip().replace("\r\n", "").replace("\t", "")
         )
         job.job_advantage = self["job_advantage"]
         job.tags = self["tags"]
-        job.job_type = self["job_type"]
         job.publish_time = self["publish_time"]
         job.job_addr = self["job_addr"]
         job.company_name = self["company_name"]
@@ -182,11 +131,8 @@ class LagouJobItem(scrapy.Item, MysqlItem, ElasticSearchItem):
                 (job.job_desc, 3),
                 (job.job_addr, 5),
                 (job.company_name, 8),
-                (job.degree_need, 4),
-                (job.job_city, 9),
             ),
         )
-        real_time_count("lagou_job_count", JOB_COUNT_INIT)
         job.save()
 
     def help_fields(self):
